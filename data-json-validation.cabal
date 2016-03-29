@@ -1,0 +1,45 @@
+name:                data-json-validation
+version:             0.1.0.0
+synopsis:            Swagger validation beyond schema validation
+description:         Please see README.md
+homepage:            http://github.com/haroldcarr/data-json-validation#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Harold Carr
+maintainer:          harold
+copyright:           2016 Harold Carr
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+
+-- directory is not needed
+-- it is there for workaround :cd test; :l Main; main;
+library
+  hs-source-dirs:      src
+  exposed-modules:     Data.Json.Validation
+  build-depends:       base >= 4.7 && < 5
+                     , aeson
+                     , bytestring
+                     , directory
+                     , text
+                     , unordered-containers
+  default-language:    Haskell2010
+
+test-suite data-json-validation-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , aeson
+                     , data-json-validation
+                     , directory
+                     , HUnit
+                     , test-hunit-util
+                     , text
+                     , unordered-containers
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/haroldcarr/data-json-validation
