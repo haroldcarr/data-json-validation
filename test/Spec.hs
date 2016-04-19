@@ -13,6 +13,7 @@ import           Test.HUnit.Util      as U (t)
 main :: IO Counts
 main = runTestTT $ TestList $ ts1 ++ ts2 ++ ts3 ++ ts4
 
+iRead :: FilePath -> IO FilePath
 iRead filename = do
     e <- doesFileExist filename
     return $ if e then filename else "test/" ++ filename
@@ -59,4 +60,3 @@ ts4 = U.t "ts4"
     [(["default"]               ,("X",String "responses-default-X-value"))
     ,(["200","schema","items"]  ,("X",String "responses-200-schema-items-X-value"))
     ,(["200"]                   ,("X",String "responses-200-X-value"))]
-
