@@ -18,7 +18,6 @@ library
   hs-source-dirs:      src
   exposed-modules:     Data.Json.Validation
                      , Data.Json.Visualization
-                     , Data.Json.Examples
   build-depends:       base >= 4.7 && < 5
                      , aeson
                      , bytestring
