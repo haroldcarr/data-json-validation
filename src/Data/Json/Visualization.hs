@@ -11,7 +11,7 @@ import qualified Data.List                         as L
 import qualified Data.Map.Strict                   as M
 import qualified Data.Maybe                        as MB
 import qualified Data.Text                         as T
-import qualified Data.Text.Lazy                    as LT
+import qualified Data.Text.Lazy                    as TL
 import           Prelude                           as P
 
 -- TODO : use utilities in https://hackage.haskell.org/package/fgl-5.5.2.3/docs/Data-Graph-Inductive-NodeMap.html
@@ -27,12 +27,12 @@ toMap = foldr go M.empty
                      acc
     go  _ _ = error "NO"
 
-mkNodeMap :: M.Map T.Text [T.Text] -> M.Map T.Text (G.LNode LT.Text)
+mkNodeMap :: M.Map T.Text [T.Text] -> M.Map T.Text (G.LNode TL.Text)
 mkNodeMap m = snd $ foldr go (0::Int, M.empty) (L.nub $ M.keys m ++ P.concat (M.elems m))
   where
-    go x (n,acc) = (n+1, M.insert x (n,LT.fromStrict x) acc)
+    go x (n,acc) = (n+1, M.insert x (n,TL.fromStrict x) acc)
 
-mapToGraph :: M.Map T.Text [T.Text] -> G.Gr LT.Text ()
+mapToGraph :: M.Map T.Text [T.Text] -> G.Gr TL.Text ()
 mapToGraph m =
     let nodeMap     = mkNodeMap m
         edges       = M.foldrWithKey go [] m
