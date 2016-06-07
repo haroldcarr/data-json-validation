@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Data.Json.Validation where
+module Data.Json.Util where
 
 import           Control.Monad       ((>=>))
 import           Data.Aeson          (Value (Array, Object), decodeStrict)
@@ -10,23 +10,23 @@ import           Data.Text           as T (Text)
 import           Prelude             as P
 import           System.IO           (IOMode (ReadMode), withFile)
 
+type Path                   = [Text]
+type PropertyName           =  Text
+type PathsPropertyNameValue = [(Path, (PropertyName, Value))]
+
 readJson :: FilePath -> IO (Maybe Value)
 readJson filename =
     withFile filename ReadMode (BS.hGetContents >=> return . decodeStrict)
 
---                       path   field  value
-type PathFieldValue = [([Text], (Text, Value))]
-
-findInJson :: Text -> Value -> PathFieldValue
-findInJson goal top = fJson top []
+findInJson :: Text -> Value -> PathsPropertyNameValue
+findInJson goal top = fVal top []
   where
-    --                 path
-    fJson :: Value -> [Text] -> PathFieldValue
-    fJson (Object o) path  = fObj (HM.toList o)
+    fVal :: Value -> Path -> PathsPropertyNameValue
+    fVal (Object o) path   = fObj (HM.toList o)
       where
         fObj []            = []
         fObj (hd@(k,v):tl)
-            | goal == k    = (P.reverse path, hd) :  fObj tl
-            | otherwise    = fJson v (k:path)     ++ fObj tl
-    fJson (Array  a) path  = P.concatMap (`fJson` path) a
-    fJson         _     _  = []
+            | goal == k    = (P.reverse path, hd) : fObj tl
+            | otherwise    = fVal v (k:path)     ++ fObj tl
+    fVal (Array  a) path   = P.concatMap (`fVal` path) a
+    fVal         _     _   = []

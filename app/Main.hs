@@ -3,7 +3,7 @@
 module Main where
 
 import           Data.GraphViz           as GV hiding (toDot)
-import           Data.Json.Validation
+import           Data.Json.Util
 import           Data.Json.Visualization
 import           System.Environment
 

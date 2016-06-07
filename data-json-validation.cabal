@@ -16,7 +16,7 @@ cabal-version:       >=1.10
 -- it is there for workaround :cd test; :l Main; main;
 library
   hs-source-dirs:      src
-  exposed-modules:     Data.Json.Validation
+  exposed-modules:     Data.Json.Util
                      , Data.Json.Visualization
   build-depends:       base >= 4.7 && < 5
                      , aeson

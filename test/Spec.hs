@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import           Control.Monad        ((>=>))
-import           Data.Aeson           (Value (Object, String))
-import           Data.HashMap.Strict  as HM (fromList)
-import           Data.Json.Validation
-import           Data.Text            as T (Text)
-import           System.Directory     (doesFileExist)
-import           System.IO.Unsafe     (unsafePerformIO)
-import           Test.HUnit           (Counts, Test (TestList), runTestTT)
-import           Test.HUnit.Util      as U (t)
+import           Control.Monad       ((>=>))
+import           Data.Aeson          (Value (Object, String))
+import           Data.HashMap.Strict as HM (fromList)
+import           Data.Json.Util
+import           Data.Text           as T (Text)
+import           System.Directory    (doesFileExist)
+import           System.IO.Unsafe    (unsafePerformIO)
+import           Test.HUnit          (Counts, Test (TestList), runTestTT)
+import           Test.HUnit.Util     as U (t)
 
 main :: IO Counts
 main = runTestTT $ TestList $ ts1 ++ ts2 ++ ts3 ++ ts4
@@ -18,7 +18,7 @@ iRead filename = do
     e <- doesFileExist filename
     return $ if e then filename else "test/" ++ filename
 
-readFind :: Text -> FilePath -> IO PathFieldValue
+readFind :: Text -> FilePath -> IO PathsPropertyNameValue
 readFind goal filename = iRead filename >>= (readJson >=> (\(Just s) -> return $ findInJson goal s))
 
 ts1 :: [Test]

@@ -6,12 +6,12 @@ import qualified Data.Aeson                        as A (Value (String))
 import qualified Data.Graph.Inductive              as G
 import qualified Data.GraphViz                     as GV
 import qualified Data.GraphViz.Attributes.Complete as GV
-import           Data.Json.Validation
+import           Data.Json.Util
 import qualified Data.Text                         as T
 import qualified Data.Text.Lazy                    as TL
 import           Prelude                           as P
 
-pToG :: PathFieldValue -> G.Gr T.Text ()
+pToG :: PathsPropertyNameValue -> G.Gr T.Text ()
 pToG  = fst . uncurry G.mkMapGraph . foldr go ([],[])
   where
     go (path, (_,A.String value)) (nodes,edges) =
@@ -29,5 +29,5 @@ gToD  = GV.graphToDot params
         { GV.fmtNode = \(_, l) -> [GV.Label $ GV.StrLabel (TL.fromStrict l)]
         }
 
-toDot :: PathFieldValue -> GV.DotGraph G.Node
+toDot :: PathsPropertyNameValue -> GV.DotGraph G.Node
 toDot  = gToD . pToG
