@@ -10,7 +10,11 @@ import           Data.Text           as T (Text)
 import           Prelude             as P
 import           System.IO           (IOMode (ReadMode), withFile)
 
-type Path                   = [Text]
+data PathSegment            = P Text | VRef Text deriving Eq
+instance Show PathSegment where
+    show (P    a) =            show a
+    show (VRef a) = "VRef " ++ show a
+type Path                   = [PathSegment]
 type PropertyName           =  Text
 type PathsPropertyNameValue = [(Path, (PropertyName, Value))]
 
@@ -27,6 +31,6 @@ findInJson goal top = fVal top []
         fObj []            = []
         fObj (hd@(k,v):tl)
             | goal == k    = (P.reverse path, hd) : fObj tl
-            | otherwise    = fVal v (k:path)     ++ fObj tl
+            | otherwise    = fVal v (P k:path)   ++ fObj tl
     fVal (Array  a) path   = P.concatMap (`fVal` path) a
     fVal         _     _   = []

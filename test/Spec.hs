@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module Spec where
+
 import           Control.Monad       ((>=>))
 import           Data.Aeson          (Value (Object, String))
 import           Data.HashMap.Strict as HM (fromList)
@@ -10,8 +12,8 @@ import           System.IO.Unsafe    (unsafePerformIO)
 import           Test.HUnit          (Counts, Test (TestList), runTestTT)
 import           Test.HUnit.Util     as U (t)
 
-main :: IO Counts
-main = runTestTT $ TestList $ ts1 ++ ts2 ++ ts3 ++ ts4
+test :: IO Counts
+test = runTestTT $ TestList $ ts1 ++ ts2 ++ ts3 ++ ts4
 
 iRead :: FilePath -> IO FilePath
 iRead filename = do
@@ -24,28 +26,42 @@ readFind goal filename = iRead filename >>= (readJson >=> (\(Just s) -> return $
 ts1 :: [Test]
 ts1 = U.t "ts1"
     (unsafePerformIO (readFind "$ref" "refs-simple-invalid.json"))
-    [(["definitions","Parent"]                                  ,("$ref",String "#/definitions/DoesNotExist"))
-    ,(["definitions","Pet","properties","tags","items"]         ,("$ref",String "#/definitions/Tag"))
-    ,(["paths","/pets","get","responses","200","schema","items"],("$ref",String "#/definitions/Pet"))]
+    [([P "definitions",P "Parent"]
+     ,("$ref",String "#/definitions/DoesNotExist"))
+    ,([P "definitions",P "Pet",P "properties",P "tags",P "items"]
+     ,("$ref",String "#/definitions/Tag"))
+    ,([P "paths",P "/pets",P "get",P "responses",P "200",P "schema",P "items"]
+     ,("$ref",String "#/definitions/Pet"))]
 
 ts2 :: [Test]
 ts2 = U.t "ts2"
     (unsafePerformIO (readFind "$ref" "refs-indirect-circular-ancestor-invalid.json"))
-    [(["definitions","Parent","allOf"]                          ,("$ref",String "#/definitions/Circular2"))
-    ,(["definitions","Circular1","allOf"]                       ,("$ref",String "#/definitions/Parent"))
-    ,(["definitions","Circular2","allOf"]                       ,("$ref",String "#/definitions/Circular1"))
-    ,(["definitions","Pet","properties","category"]             ,("$ref",String "#/definitions/Category"))
-    ,(["definitions","Pet","properties","tags","items"]         ,("$ref",String "#/definitions/Tag"))
-    ,(["paths","/pets","get","responses","200","schema","items"],("$ref",String "#/definitions/Pet"))]
+    [([P "definitions",P "Parent",P "allOf"]
+     ,("$ref",String "#/definitions/Circular2"))
+    ,([P "definitions",P "Circular1",P "allOf"]
+     ,("$ref",String "#/definitions/Parent"))
+    ,([P "definitions",P "Circular2",P "allOf"]
+     ,("$ref",String "#/definitions/Circular1"))
+    ,([P "definitions",P "Pet",P "properties",P "category"]
+     ,("$ref",String "#/definitions/Category"))
+    ,([P "definitions",P "Pet",P "properties",P "tags",P "items"]
+     ,("$ref",String "#/definitions/Tag"))
+    ,([P "paths",P "/pets",P "get",P "responses",P "200",P "schema",P "items"]
+     ,("$ref",String "#/definitions/Pet"))]
 
 ts3 :: [Test]
 ts3 = U.t "ts3"
     (unsafePerformIO (readFind "X" "x.json"))
-    [(["Tag"]                              ,("X",Object (fromList [("Tag-X-value",Object (fromList [("X",String "Tag-X-value-X-value")]))])))
-    ,(["responses","default"]              ,("X",String "responses-default-X-value"))
-    ,(["responses","200","schema","items"] ,("X",String "responses-200-schema-items-X-value"))
-    ,(["responses","200"]                  ,("X",String "responses-200-X-value"))
-    ,(["tags","items"]                     ,("X",String "tags-items-X-value-2"))]
+    [([P "Tag"]
+     ,("X",Object (fromList [("Tag-X-value",Object (fromList [("X",String "Tag-X-value-X-value")]))])))
+    ,([P "responses",P "default"]
+     ,("X",String "responses-default-X-value"))
+    ,([P "responses",P "200",P "schema",P "items"]
+     ,("X",String "responses-200-schema-items-X-value"))
+    ,([P "responses",P "200"]
+     ,("X",String "responses-200-X-value"))
+    ,([P "tags",P "items"]
+     ,("X",String "tags-items-X-value-2"))]
 
 ts4 :: [Test]
 ts4 = U.t "ts4"
@@ -57,6 +73,6 @@ ts4 = U.t "ts4"
        ,("200"     ,Object (fromList [("schema",Object (fromList [("items",Object (fromList [("X",String "responses-200-schema-items-X-value")]))
                                                                  ,("type",String "array")]))
                                      ,("X",String "responses-200-X-value")]))])))
-    [(["default"]               ,("X",String "responses-default-X-value"))
-    ,(["200","schema","items"]  ,("X",String "responses-200-schema-items-X-value"))
-    ,(["200"]                   ,("X",String "responses-200-X-value"))]
+    [([P "default"]                  ,("X",String "responses-default-X-value"))
+    ,([P "200",P "schema",P "items"] ,("X",String "responses-200-schema-items-X-value"))
+    ,([P "200"]                      ,("X",String "responses-200-X-value"))]

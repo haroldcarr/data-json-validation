@@ -15,12 +15,13 @@ pToG :: PathsPropertyNameValue -> G.Gr T.Text ()
 pToG  = fst . uncurry G.mkMapGraph . foldr go ([],[])
   where
     go (path, (_,A.String value)) (nodes,edges) =
-        let n1 = T.intercalate "/" (P.take 2 path)  -- only use first part of path
-            n2 = T.drop 2 value                     -- do not include "#/"
+                                                          -- only use first part of path
+        let n1 = T.intercalate "/" (map (T.pack . P.show) (P.take 2 path))
+            n2 = T.drop 2 value                           -- do not include "#/"
         in (  n1:n2    :nodes
            , (n1,n2,()):edges
            )
-    go                         _     acc  = acc     -- this should not happen
+    go                         _           acc  = acc -- this should not happen
 
 gToD :: G.Gr T.Text () -> GV.DotGraph G.Node
 gToD  = GV.graphToDot params
