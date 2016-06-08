@@ -36,11 +36,11 @@ ts1 = U.t "ts1"
 ts2 :: [Test]
 ts2 = U.t "ts2"
     (unsafePerformIO (readFind "$ref" "refs-indirect-circular-ancestor-invalid.json"))
-    [([P "definitions",P "Parent",P "allOf"]
+    [([P "definitions",P "Parent",P "allOf", VRef 0]
      ,("$ref",String "#/definitions/Circular2"))
-    ,([P "definitions",P "Circular1",P "allOf"]
+    ,([P "definitions",P "Circular1",P "allOf", VRef 0]
      ,("$ref",String "#/definitions/Parent"))
-    ,([P "definitions",P "Circular2",P "allOf"]
+    ,([P "definitions",P "Circular2",P "allOf", VRef 0]
      ,("$ref",String "#/definitions/Circular1"))
     ,([P "definitions",P "Pet",P "properties",P "category"]
      ,("$ref",String "#/definitions/Category"))
